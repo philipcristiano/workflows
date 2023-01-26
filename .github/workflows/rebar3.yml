@@ -1,0 +1,93 @@
+name: Erlang Test and lint
+
+on:
+  workflow_call:
+    inputs:
+
+      image:
+        description: "Action image for execution"
+        default: elixir:1.14.2
+        type: string
+
+      timeout:
+        description: "Timeout for jobs in minutes"
+        default: 15
+        type: number
+
+    secrets:
+
+      CODECOV_TOKEN:
+        required: true
+
+env:
+  MIX_REBAR: ./rebar3
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout }}
+    container:
+      image: ${{ inputs.image }}
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/rebar3
+          _build
+        key: ${{ runner.os }}-erlang-${{ env.OTP_VERSION }}-${{ hashFiles('**/*rebar.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-erlang-${{ env.OTP_VERSION }}-
+
+    - name: Compile
+      run: |
+        mix local.rebar --force
+        mix local.hex --force
+        make compile
+      env:
+        GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=no"
+    - name: Run tests
+      env:
+        COVER: "1"
+      run: |
+        make test
+        ./rebar3 codecov analyze path="_build/test/cover"
+
+    - name: Upload coverage data to CodeCov
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        name: eunit
+
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout }}
+    container:
+      image: ${{ inputs.image }}
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/rebar3
+          _build
+        key: ${{ runner.os }}-erlang-${{ env.OTP_VERSION }}-${{ hashFiles('**/*rebar.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-erlang-${{ env.OTP_VERSION }}-
+
+    - name: Compile
+      run: |
+        mix local.rebar --force
+        mix local.hex --force
+        ./rebar3 compile
+
+    - name: erlfmt check
+      run: ./rebar3 fmt --check
+
+    - name: Dialyze
+      run: ./rebar3 dialyzer
