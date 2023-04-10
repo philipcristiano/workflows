@@ -23,7 +23,19 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 ```
 
-## docker-build.yml
+## docker-build(-push).yml
+
+Docker building and build/push actions.
+
+Push requires secrets for:
+
+* `DOCKER_USERNAME`
+* `DOCKER_PASSWORD`
+
+These can optionally include multi-platform options
+
+* `qemu_platforms`
+* `docker_platforms`
 
 Example usage:
 

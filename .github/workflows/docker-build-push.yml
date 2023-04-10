@@ -18,13 +18,21 @@ on:
         description: "Repository"
         type: string
 
+      qemu_platforms:
+        description: "Comma-separated list of platforms to include for Docker images"
+        default: ""
+        type: string
+
+      docker_platforms:
+        description: "Comma-separated list of platforms to include for Docker images"
+        default: "linux/amd64"
+        type: string
 
     secrets:
       DOCKER_USERNAME:
         required: true
       DOCKER_PASSWORD:
         required: true
-
 
 jobs:
   build:
@@ -33,6 +41,12 @@ jobs:
     timeout-minutes: ${{ inputs.timeout }}
     steps:
     - uses: 'actions/checkout@v3'
+
+    - name: Set up QEMU
+      if: inputs.platforms != ''
+      uses: docker/setup-qemu-action@v2
+      with:
+        platforms: ${{ inputs.platforms }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
