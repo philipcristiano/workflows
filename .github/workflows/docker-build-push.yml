@@ -16,6 +16,7 @@ on:
 
       repository:
         description: "Repository"
+        default: ${{ github.repository }}
         type: string
 
       qemu_platforms:
