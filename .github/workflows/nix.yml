@@ -14,6 +14,11 @@ on:
         default: "true"
         type: string
 
+      flakes-from-devshell:
+        description: "Use devshell flake setup"
+        default: false
+        type: boolean
+
 jobs:
 
   nix:
@@ -29,6 +34,7 @@ jobs:
         extra_nix_config: |
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
 
-    - uses: workflow/nix-shell-action@v3
+    - uses: workflow/nix-shell-action@v3.3.0
       with:
+        flakes-from-devshell: ${{ inputs.flakes-from-devshell }}
         script: ${{ inputs.script }}
