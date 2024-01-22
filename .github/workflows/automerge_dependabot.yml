@@ -666,10 +666,16 @@ name: "Automerge Dependabot PRs"
 on:
   workflow_call:
     inputs:
+
       automerge:
         required: false
         type: boolean
         default: false
+
+    secrets:
+
+      WF_GITHUB_TOKEN:
+        required: true
 
 jobs:
   automerge:
@@ -681,11 +687,11 @@ jobs:
         id: dependabot-metadata
         uses: dependabot/fetch-metadata@v1
         with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          github-token: "${{ secrets.WF_GITHUB_TOKEN }}"
 
       - uses: actions/checkout@v4
         with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
+          token: "${{ secrets.WF_GITHUB_TOKEN }}"
 
       - name: Approve patch and minor updates
         if: ${{inputs.automerge && (steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch' || steps.dependabot-metadata.outputs.update-type == 'version-update:semver-minor')}}
@@ -694,7 +700,7 @@ jobs:
           gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.WF_GITHUB_TOKEN}}
 
       - name: Comment on minor updates of dependencies
         if: ${{ steps.dependabot-metadata.outputs.update-type == 'version-update:semver-patch' || steps.dependabot-metadata.outputs.update-type == 'version-update:semver-minor'}}
@@ -703,7 +709,7 @@ jobs:
           gh pr review $PR_URL --approve -b "Approving this pull request because it includes a patch or minor update."
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.WF_GITHUB_TOKEN}}
 
       - name: Comment on major updates of dependencies
         if: ${{steps.dependabot-metadata.outputs.update-type == 'version-update:semver-major' }}
@@ -712,5 +718,5 @@ jobs:
           gh pr comment $PR_URL --body "**Not approving** this PR because it includes a major update of a dependency. Please review the changes and approve manually."
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.WF_GITHUB_TOKEN}}
 
