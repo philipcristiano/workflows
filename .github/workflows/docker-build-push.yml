@@ -14,11 +14,6 @@ on:
         default: 15
         type: number
 
-      tag_pattern_prefix:
-        description: "Strip prefix for semver pattern versioning"
-        default: ""
-        type: string
-
       repository:
         description: "Repository"
         type: string
@@ -69,9 +64,9 @@ jobs:
           type=schedule
           type=ref,event=branch
           type=ref,event=pr
-          type=semver,pattern=${{inputs.tag_pattern_prefix}}{{version}}
-          type=semver,pattern=${{inputs.tag_pattern_prefix}}{{major}}.{{minor}}
-          type=semver,pattern=${{inputs.tag_pattern_prefix}}{{major}}
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=semver,pattern={{major}}
           type=sha
 
     - name: Login to Docker Hub
