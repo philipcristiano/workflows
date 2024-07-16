@@ -40,13 +40,10 @@ jobs:
 
     - name: Build
       run: cargo build --verbose
+      env:
+        SQLX_OFFLINE: true
 
     - name: Run tests
       run: cargo test --verbose
-
-    # TODO
-    # - name: Upload coverage data to CodeCov
-    #   uses: codecov/codecov-action@v3
-    #   with:
-    #     token: ${{ secrets.CODECOV_TOKEN }}
-    #     name: eunit
+      env:
+        SQLX_OFFLINE: true
