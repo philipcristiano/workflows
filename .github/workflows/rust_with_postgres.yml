@@ -18,8 +18,13 @@ on:
         description: "Name of the postgres database"
         type: string
 
+      db_user:
+        description: "Name of the postgres user"
+        default: "postgres"
+        type: string
+
       db_password:
-        description: "Name of the postgres database"
+        description: "Postgres user password"
         default: "postgres"
         type: string
 
@@ -38,6 +43,7 @@ jobs:
       postgres:
         image: ${{ inputs.db_image }}
         env:
+          POSTGRES_USER: ${{ inputs.db_user }}
           POSTGRES_PASSWORD: ${{ inputs.db_password }}
           POSTGRES_DB: ${{ inputs.db_name }}
         options: >-
