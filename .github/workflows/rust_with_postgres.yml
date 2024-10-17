@@ -80,3 +80,4 @@ jobs:
       run: cargo test --verbose
       env:
         SQLX_OFFLINE: true
+        DATABASE_URL: postgres://${{ inputs.db_user }}:${{ inputs.db_password }}@localhost:5432/${{ inputs.db_name }}?sslmode=disable
