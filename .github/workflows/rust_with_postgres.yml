@@ -1,0 +1,76 @@
+name: Rust Test
+
+on:
+  workflow_call:
+    inputs:
+
+      timeout:
+        description: "Timeout for jobs in minutes"
+        default: 15
+        type: number
+
+      db_image:
+        description: "Name of the postgres Docker image"
+        default: "postgres:17"
+        type: string
+
+      db_name:
+        description: "Name of the postgres database"
+        type: string
+
+      db_password:
+        description: "Name of the postgres database"
+        default: "postgres"
+        type: string
+
+      setup_script:
+        description: ""
+        default: ""
+        type: string
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout }}
+
+    services:
+      postgres:
+        image: ${{ inputs.db_image }}
+        env:
+          POSTGRES_PASSWORD: ${{ inputs.db_password }}
+          POSTGRES_DB: ${{ inputs.db_name }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Script
+      if: ${{ inputs.setup_script }}
+      run: ${{ inputs.setup_script }}
+
+    - uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Build
+      run: cargo build --verbose
+      env:
+        SQLX_OFFLINE: true
+
+    - name: Run tests
+      run: cargo test --verbose
+      env:
+        SQLX_OFFLINE: true
