@@ -56,7 +56,7 @@ jobs:
         cache-to: type=gha,mode=max
 
         load: true
-        tags: local-build::${{ github.sha }}
+        tags: local-build:${{ github.sha }}
 
         push: false
 
