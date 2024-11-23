@@ -24,6 +24,11 @@ on:
         default: "linux/amd64"
         type: string
 
+      check_command:
+        description: "Command run in a docker container from the built image meant to check that it is working"
+        default: ""
+        type: string
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -50,4 +55,12 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
+        load: true
+        tags: local-build::${{ github.sha }}
+
         push: false
+
+    - name: Check Container
+      if: inputs.check_command != ''
+      run: |
+          docker run local-build:${{ github.sha }} ${{ inputs.check_command }}
