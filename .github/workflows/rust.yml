@@ -14,7 +14,7 @@ on:
         default: ""
         type: string
 
-      working_directory:
+      working-directory:
         description: "Working directory for jobs"
         default: "."
         type: string
