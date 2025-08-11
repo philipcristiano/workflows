@@ -27,7 +27,7 @@ jobs:
     timeout-minutes: ${{ inputs.timeout }}
     defaults:
       run:
-        working-directory: ${{ inputs.working_directory }}
+        working-directory: ${{ inputs.working-directory }}
 
     steps:
     - uses: actions/checkout@v4
