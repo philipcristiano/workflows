@@ -14,12 +14,20 @@ on:
         default: ""
         type: string
 
+      working_directory:
+        description: "Working directory for jobs"
+        default: "."
+        type: string
+
 
 jobs:
 
   test:
     runs-on: ubuntu-latest
     timeout-minutes: ${{ inputs.timeout }}
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
 
     steps:
     - uses: actions/checkout@v4
