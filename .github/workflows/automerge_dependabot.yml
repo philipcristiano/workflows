@@ -689,7 +689,7 @@ jobs:
         with:
           github-token: "${{ secrets.WF_GITHUB_TOKEN }}"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           token: "${{ secrets.WF_GITHUB_TOKEN }}"
 
