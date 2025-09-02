@@ -9,6 +9,16 @@ on:
         default: 15
         type: number
 
+      cargo-build-options:
+        description: "Options to pass to cargo build"
+        type: string
+        default: "--workspace --all-features --all-targets --verbose"
+
+      cargo-test-options:
+        description: "Options to pass to cargo build"
+        type: string
+        default: "--workspace --all-features --all-targets --verbose"
+
       db_image:
         description: "Name of the postgres Docker image"
         default: "postgres:17"
@@ -72,12 +82,12 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Build
-      run: cargo build --verbose
+      run: cargo build ${{ inputs.cargo-build-options }}
       env:
         SQLX_OFFLINE: true
 
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test ${{ inputs.cargo-build-options }}
       env:
         SQLX_OFFLINE: true
         DATABASE_URL: postgres://${{ inputs.db_user }}:${{ inputs.db_password }}@localhost:5432/${{ inputs.db_name }}?sslmode=disable
