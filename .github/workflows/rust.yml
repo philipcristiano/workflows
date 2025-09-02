@@ -21,10 +21,12 @@ on:
 
       cargo-build-options:
         description: "Options to pass to cargo build"
+        type: string
         default: "--workspace --all-features --all-targets --verbose"
 
       cargo-test-options:
         description: "Options to pass to cargo build"
+        type: string
         default: "--workspace --all-features --all-targets --verbose"
 
 
