@@ -62,6 +62,6 @@ jobs:
         SQLX_OFFLINE: true
 
     - name: Run tests
-      run: cargo test ${{ inputs.cargo-build-options }}
+      run: cargo test ${{ inputs.cargo-test-options }}
       env:
         SQLX_OFFLINE: true
